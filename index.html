@@ -22,8 +22,9 @@
 
     <button id="gen" aria-label="Generar código QR y mostrar mapa"></button>
 
-    <label for="busqueda">Buscar lugar</label>
-    <input type="text" id="busqueda" placeholder="Escribe nombre o número">
+    <label for="busqueda" id="labelBusqueda">Buscar lugar</label>
+    <input type="text" id="busqueda" data-translate="placeholder-busqueda" placeholder="Escribe nombre o número">
+    <button onclick="toggleDarkMode()" id="btnDarkMode"></button>
 
     <label for="destino" id="labelDestino"></label>
     <select id="destino"></select>
