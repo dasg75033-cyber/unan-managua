@@ -2,7 +2,9 @@ const textosBase = {
   seleccionarDestino: "Selecciona Pabellón o lugar",
   seleccionarAula: "Selecciona Aula (si aplica)",
   generarQR: "Generar QR y mostrar mapa",
-  idiomaLabel: "Idioma"
+  idiomaLabel: "Idioma",
+  placeholderBusqueda: "Escribe nombre o número",
+  modoOscuro: "Modo oscuro"
 };
 
 const textos = {
@@ -80,6 +82,10 @@ function updateTextos() {
   labelAula.textContent = t.seleccionarAula;
   genBtn.textContent = t.generarQR;
   labelIdioma.textContent = t.idiomaLabel;
+  busquedaInput.placeholder = t.placeholderBusqueda;
+  btnDarkMode.textContent = t.modoOscuro;
+
+  localStorage.setItem('selectedLanguage', idioma);
 }
 
 async function generateQR() {
@@ -113,9 +119,29 @@ async function generateQR() {
 }
 
 function toggleDarkMode() {
-  document.body.classList.toggle('dark-mode');
+    const isDarkMode = document.body.classList.toggle('dark-mode');
+    // Guardar la preferencia en el navegador
+    if (isDarkMode) {
+        localStorage.setItem('darkMode', 'enabled');
+    } else {
+        localStorage.setItem('darkMode', 'disabled');
+    }
 }
 
+function loadDarkModePreference() {
+    // Comprueba si la preferencia está guardada como 'enabled'
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        // Si lo está, aplica la clase 'dark-mode' al body
+        document.body.classList.add('dark-mode');
+    }
+}
+
+function loadLanguagePreference() {
+  const savedLang = localStorage.getItem('selectedLanguage');
+  if (savedLang) {
+    idiomaSelect.value =savedLang;
+  }
+}
 // Eventos
 idiomaSelect.addEventListener('change', () => {
   updateTextos();
@@ -132,6 +158,8 @@ busquedaInput.addEventListener('input', () => renderDestinos(busquedaInput.value
 genBtn.addEventListener('click', generateQR);
 
 // Inicialización
+loadLanguagePreference();
 renderDestinos();
 updateTextos();
 generateQR();
+loadDarkModePreference();
