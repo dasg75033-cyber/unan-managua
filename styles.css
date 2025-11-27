@@ -8,15 +8,12 @@
 
 body {
   margin: 0;
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
   background: var(--color-fondo);
   color: #111;
 }
 
 .sidebar {
-  width: 280px;
   background: var(--color-primario);
   color: #fff;
   display: flex;
@@ -78,7 +75,6 @@ button:hover {
 }
 
 .content {
-  flex: 1;
   display: flex;
   flex-direction: column;
   padding: 12px;
@@ -112,12 +108,10 @@ iframe {
 }
 
 .qr-holder {
-    width: 920px;
-    height: 180px;
-    padding: 8px;
-    background: #f8f8f8;
+    width: 100%;
+    padding: 24px 8px;
+    background: transparent;
     border-radius: 8px;
-    border: 1px dashed #ccc;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -130,6 +124,7 @@ iframe {
 .qr-holder::before {
     content: "";
     position: absolute;
+    inset: 0;
     top: 0;
     left: 0;
     width: 100%;
@@ -160,12 +155,16 @@ body.dark-mode .sidebar {
 body.dark-mode select,
 body.dark-mode input {
   background: #2c2c2c;
-  color: #eee;
+  color: #eeee;
 }
 
-body.dark-mode button {
+body.dark-mode button,
+body.dark-mode .btn {
   background: #1a6b5c;
   color: #eee;
+
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 body.dark-mode .map-holder {
@@ -184,4 +183,42 @@ body.dark-mode .qr-holder {
 
 body.dark-mode .qr-holder::before {
     filter: grayscale(100%);
+}
+
+/* Media Query para Pantallas Pequeñas (Móviles) */
+@media (max-width: 991.98px) {
+
+    body{
+      overflow-y: auto !important;
+      overflow-x: auto !important;
+      height: auto !important;
+    }
+
+    .container-fluid,
+    .row{
+      height: auto !important;
+      min-height: auto !important;
+    }
+    
+    /* El contenedor del mapa (col-12 col-lg-8 content) */
+    .content {
+        /* Eliminamos la altura fija/flexible del modo escritorio para que fluya en móvil */
+        height: auto; 
+        min-height: auto;
+    }
+
+    /* El mapa y el QR Panel deben ajustarse automáticamente en altura */
+    .map-holder,
+    .qr-panel {
+        /* Deshabilitamos las reglas de alto fijo que funcionaban en escritorio */
+        height: auto !important; 
+        min-height: auto !important;
+        flex-shrink: 0 !important; /* Aseguramos que no se comprima */
+        width: 100%;
+    }
+    
+    /* Damos una altura mínima al QR Panel para que no se comprima demasiado */
+    .qr-panel {
+        min-height: 200px; /* Puedes ajustar este valor si lo necesitas más grande o pequeño */
+    }
 }

@@ -1,51 +1,63 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Mapa interactivo UNAN Managua</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Mapa interactivo UNAN Managua</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="sidebar">
-    <h1><img src="assets/logo.png" alt="Logo UNAN"> UNAN Managua</h1>
-    <h2 id="lema"></h2>
+    <div class="container-fluid p-0"> 
+        <div class="row g-0 min-vh-100"> 
 
-    <label for="idioma" id="labelIdioma">Idioma</label>
-    <select id="idioma">
-      <option value="es" selected>Español</option>
-      <option value="mi">Miskito</option>
-      <option value="gn">Garífuna</option>
-      <option value="nl">Náhuatl</option>
-      <option value="en">Inglés</option>
-    </select>
+            <div class="col-12 col-lg-4 sidebar p-3 p-lg-4"> 
+                
+                <h1><img src="assets/logo.png" alt="Logo UNAN"> UNAN Managua</h1>
+                <h2 id="lema" class="mb-3"></h2>
 
-    <button id="gen" aria-label="Generar código QR y mostrar mapa"></button>
+                <label for="idioma" id="labelIdioma" class="form-label mt-2">Idioma</label>
+                <select id="idioma" class="form-select mb-3"> 
+                    <option value="es" selected>Español</option>
+                    <option value="mi">Miskito</option>
+                    <option value="gn">Garífuna</option>
+                    <option value="nl">Náhuatl</option>
+                    <option value="en">Inglés</option>
+                </select>
 
-    <label for="busqueda" id="labelBusqueda">Buscar lugar</label>
-    <input type="text" id="busqueda" data-translate="placeholder-busqueda" placeholder="Escribe nombre o número">
+                <button id="gen" aria-label="Generar código QR y mostrar mapa" class="btn-warning w-100 mb-3"></button>
 
-    <label for="destino" id="labelDestino"></label>
-    <select id="destino"></select>
+                <label for="busqueda" id="labelBusqueda" class="form-label">Buscar lugar</label>
+                <input type="text" id="busqueda" data-translate="placeholder-busqueda" placeholder="Escribe nombre o número" class="form-control mb-3">
+                
+                <label for="destino" id="labelDestino" class="form-label"></label>
+                <select id="destino" class="form-select mb-3"></select>
 
-    <label for="aula" id="labelAula"></label>
-    <select id="aula"><option value="">--</option></select>
+                <label for="aula" id="labelAula" class="form-label"></label>
+                <select id="aula" class="form-select mb-3"><option value="">--</option></select>
 
-    <button onclick="toggleDarkMode()" id="btnDarkMode"></button>
-  </div>
+                <button id="btnDarkMode" class=btn-warning w-100 mb-3></button>
+            </div> 
 
-  <div class="content">
-    <div class="map-holder">
-      <iframe id="map" allowfullscreen loading="lazy"></iframe>
+            <div class="col-12 col-lg-8 content p-0 d-flex flex-column"> 
+                
+                <div class="map-holder flex-grow-1"> 
+                    <iframe id="map" allowfullscreen loading="lazy" class="w-100 h-100 border-0"></iframe>
+                </div>
+
+                <div class="qr-panel flex-shrink-0">
+                    <div class="qr-holder" id="qr"></div>
+                </div>
+
+            </div>
+        </div>
     </div>
 
-    <div class="qr-panel">
-      <div class="qr-holder" id="qr"></div>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-  <script src="main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eGceHNDzF5b2D1y" crossorigin="anonymous"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <script src="main.js" type="module"></script>
 </body>
 </html>
-
