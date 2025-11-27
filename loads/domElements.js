@@ -1,0 +1,13 @@
+export const destinoSelect = document.getElementById('destino');
+export const aulaSelect = document.getElementById('aula');
+export const qrHolder = document.getElementById('qr');
+export const mapFrame = document.getElementById('map');
+export const genBtn = document.getElementById('gen');
+export const idiomaSelect = document.getElementById('idioma');
+export const lemaH2 = document.getElementById('lema');
+export const labelDestino = document.getElementById('labelDestino');
+export const labelAula = document.getElementById('labelAula');
+export const labelIdioma = document.getElementById('labelIdioma');
+export const busquedaInput = document.getElementById('busqueda');
+export const labelBusqueda = document.getElementById('labelBusqueda');
+export const btnDarkMode = document.getElementById('btnDarkMode');
