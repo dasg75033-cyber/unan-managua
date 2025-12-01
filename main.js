@@ -4,8 +4,6 @@ import { destinosTraducidos } from './loads/data.js';
 
 import * as DOM from './loads/domElements.js'; 
 
-const DARK_MAP_STYLE = "&style=feature:all|element:labels.text.fill|color:0xffffffff&style=feature:road|element:geometry|color:0x515151|lightness:10&style=feature:water|element:geometry|color:0x3a3a3a";
-
 function removeAccents(str) {
     return str.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 }

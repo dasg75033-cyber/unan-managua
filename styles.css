@@ -141,10 +141,20 @@ iframe {
     background: transparent !important;
 }
 
+
+
 /* Modo oscuro */
 body.dark-mode {
   background: #121212;
   color: #eee;
+}
+
+body.dark-mode #map {
+  filter: invert(100%) hue-rotate(180deg);
+}
+
+body.dark-mode #map * {
+  filter: invert(100%) hue-rotate(180deg);
 }
 
 body.dark-mode .sidebar {
