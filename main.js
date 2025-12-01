@@ -88,10 +88,10 @@ async function generateQR() {
         return;
     }
 
-    const mapsUrl = `http://maps.google.com/?q=${encodeURIComponent(coords)}&hl=${idioma}`;
+    const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(coords)}&hl=${idioma}`;
     
     // Se añade el estilo al iframe del mapa
-    DOM.mapFrame.src = `http://maps.google.com/maps?q=${encodeURIComponent(coords)} (${encodeURIComponent(nombre)})&t=&z=17&ie=UTF8&iwloc=B&hl=${idioma}&output=embed${mapThemeParam}`;
+    DOM.mapFrame.src = `https://maps.google.com/maps?q=${encodeURIComponent(coords)} (${encodeURIComponent(nombre)})&t=&z=17&ie=UTF8&iwloc=B&hl=${idioma}&output=embed${mapThemeParam}`;
 
     DOM.qrHolder.innerHTML = '';
     try {
