@@ -2,9 +2,17 @@
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Mapa Interactivo y buscador de aulas del Recinto Universitario Rubén Darío - UNAN Managua. Genera códigos QR y rutas directas.">
+    <meta name="theme-color" content="#002B5C">
     <title>Mapa Interactivo UNAN Managua</title>
 
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Favicons -->
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
     <link rel="shortcut icon" href="assets/favicon/favicon.ico">
@@ -12,94 +20,168 @@
     <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
     <link rel="manifest" href="assets/favicon/site.webmanifest">
     
+    <!-- Bootstrap 5.3 CSS Grid & Utilities -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
+    <!-- Custom Modern Design System -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container-fluid p-0"> 
+    <a href="#contentMain" class="skip-link">Saltar al mapa interactivo</a>
+
+    <!-- Segmented Navigation for Mobile Devices (< 992px) -->
+    <nav class="mobile-tabs d-lg-none" aria-label="Navegación móvil de vistas">
+        <button type="button" id="tabBtnControls" class="mobile-tab-btn active" aria-selected="true" role="tab">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <span id="tabLabelSearch">Explorar</span>
+        </button>
+        <button type="button" id="tabBtnMap" class="mobile-tab-btn" aria-selected="false" role="tab">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+            <span id="tabLabelMap">Mapa y QR</span>
+        </button>
+    </nav>
+
+    <div class="container-fluid p-0 app-layout"> 
         <div class="row g-0 min-vh-100"> 
 
-            <div class="col-12 col-lg-4 sidebar p-3 p-lg-4"> 
+            <!-- Sidebar Panel: Controles, Búsqueda y Selección -->
+            <aside id="sidebarPanel" class="col-12 col-lg-4 sidebar p-3 p-xl-4 d-flex flex-column"> 
                 
-                <h1><img src="assets/logo.png" alt="Logo UNAN" width="36" height="36"> UNAN Managua</h1>
-                <h2 id="lema" class="mb-3"></h2>
+                <header class="sidebar-header mb-3">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div class="brand-badge d-flex align-items-center gap-2">
+                            <img src="assets/logo.png" alt="Escudo UNAN Managua" width="38" height="38" class="brand-logo">
+                            <div>
+                                <h1 class="brand-title m-0">UNAN Managua</h1>
+                                <span class="brand-subtitle">Campus RURD</span>
+                            </div>
+                        </div>
 
-                <label for="idioma" id="labelIdioma" class="form-label mt-2">Idioma</label>
-                <select id="idioma" class="form-select mb-3" aria-label="Seleccionar idioma de la interfaz"> 
-                    <option value="es" selected>Español</option>
-                    <option value="mi">Miskito</option>
-                    <option value="cab">Garífuna</option>
-                    <option value="nah">Náhuatl</option>
-                    <option value="yan">Mayagna</option>
-                    <option value="en">English</option>
-                </select>
+                        <!-- Theme Toggle Button with SVG Icons -->
+                        <button id="btnDarkMode" class="theme-toggle-btn" aria-label="Alternar tema oscuro y claro" title="Alternar tema">
+                            <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                            <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        </button>
+                    </div>
+                    
+                    <p id="lema" class="campus-motto m-0"></p>
+                </header>
 
-                <button id="gen" aria-label="Generar código QR y mostrar mapa" class="btn btn-warning w-100 mb-3"></button>
+                <div class="sidebar-form flex-grow-1">
+                    <!-- Selector de Idioma -->
+                    <div class="form-group mb-3">
+                        <label for="idioma" id="labelIdioma" class="form-label">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                            <span>Idioma</span>
+                        </label>
+                        <select id="idioma" class="form-select custom-select" aria-label="Seleccionar idioma de la interfaz"> 
+                            <option value="es" selected>Español</option>
+                            <option value="mi">Miskito (Miskitu)</option>
+                            <option value="cab">Garífuna (Garinagu)</option>
+                            <option value="nah">Náhuatl (Pipil)</option>
+                            <option value="yan">Mayagna (Panamahka)</option>
+                            <option value="en">English (Inglés)</option>
+                        </select>
+                    </div>
 
-                <label for="busqueda" id="labelBusqueda" class="form-label">Buscar lugar</label>
-                <div class="search-wrapper mb-3">
-                    <input type="text" id="busqueda" placeholder="Escribe nombre o número" class="form-control" autocomplete="off" spellcheck="false">
-                    <button type="button" id="btnClearSearch" class="search-clear-btn d-none" aria-label="Limpiar búsqueda">&times;</button>
+                    <!-- Botón Principal Generar QR -->
+                    <button id="gen" aria-label="Generar código QR y actualizar mapa" class="btn btn-action-primary w-100 mb-3">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        <span id="genBtnText">Generar QR y mostrar mapa</span>
+                    </button>
+
+                    <!-- Buscador Inteligente -->
+                    <div class="form-group mb-3">
+                        <label for="busqueda" id="labelBusqueda" class="form-label">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <span>Buscar lugar</span>
+                        </label>
+                        <div class="search-wrapper">
+                            <input type="text" id="busqueda" placeholder="Escribe nombre, número o laboratorio..." class="form-control custom-input" autocomplete="off" spellcheck="false">
+                            <button type="button" id="btnClearSearch" class="search-clear-btn d-none" aria-label="Limpiar búsqueda">&times;</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Región accesible para anuncios de lectores de pantalla -->
+                    <div id="searchLiveFeedback" class="visually-hidden" role="status" aria-live="polite"></div>
+
+                    <!-- Estado Vacío (Empty State) con sugerencias interactivas -->
+                    <div id="emptyState" class="empty-state d-none" role="region" aria-label="Sin resultados de búsqueda">
+                        <p id="emptyStateText" class="m-0"></p>
+                        <div id="emptyStateChips" class="suggestion-chips"></div>
+                    </div>
+
+                    <!-- Selector de Destino Principal (Pabellón / Edificio) -->
+                    <div class="form-group mb-3">
+                        <label for="destino" id="labelDestino" class="form-label"></label>
+                        <select id="destino" class="form-select custom-select" aria-label="Selecciona pabellón o lugar principal"></select>
+                    </div>
+
+                    <!-- Selector de Aula / Subdestino -->
+                    <div class="form-group mb-3">
+                        <label for="aula" id="labelAula" class="form-label"></label>
+                        <select id="aula" class="form-select custom-select" aria-label="Selecciona aula o subdestino"><option value="">--</option></select>
+                    </div>
                 </div>
+
+                <footer class="sidebar-footer pt-3 mt-auto text-center">
+                    <small class="text-white-50">UNAN Managua &copy; 2026 • Acceso Inclusivo</small>
+                </footer>
+            </aside> 
+
+            <!-- Content Area: Mapa Interactivo y Tarjeta QR -->
+            <main id="contentMain" class="col-12 col-lg-8 content p-3 p-lg-4 d-flex flex-column"> 
                 
-                <div id="searchLiveFeedback" class="visually-hidden" role="status" aria-live="polite"></div>
-
-                <div id="emptyState" class="empty-state d-none" role="region" aria-label="Sin resultados de búsqueda">
-                    <p id="emptyStateText"></p>
-                    <div id="emptyStateChips" class="suggestion-chips"></div>
-                </div>
-
-                <label for="destino" id="labelDestino" class="form-label"></label>
-                <select id="destino" class="form-select mb-3" aria-label="Selecciona pabellón o lugar principal"></select>
-
-                <label for="aula" id="labelAula" class="form-label"></label>
-                <select id="aula" class="form-select mb-3" aria-label="Selecciona aula o subdestino"><option value="">--</option></select>
-
-                <button id="btnDarkMode" class="btn btn-warning w-100 mb-3" aria-label="Alternar modo oscuro y claro"></button>
-            </div> 
-
-            <div class="col-12 col-lg-8 content p-0 d-flex flex-column"> 
-                
-                <div class="map-holder flex-grow-1 position-relative"> 
-                    <iframe id="map" title="Mapa de ubicación campus UNAN Managua" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="w-100 h-100 border-0"></iframe>
+                <!-- Contenedor del Mapa Embebido -->
+                <div class="map-card flex-grow-1 position-relative mb-3"> 
+                    <iframe id="map" title="Mapa de ubicación interactivo UNAN Managua" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="w-100 h-100 border-0 map-iframe"></iframe>
+                    
+                    <!-- Indicador de estado Offline -->
                     <div id="offlineNotice" class="offline-badge d-none" role="status">
                         <span class="offline-dot"></span> <span id="offlineNoticeText">Sin conexión</span>
                     </div>
                 </div>
 
-                <div class="qr-panel flex-shrink-0">
+                <!-- Tarjeta de Código QR y Barra de Acciones de Alto Contraste -->
+                <section class="qr-section flex-shrink-0" aria-label="Código QR y enlaces de navegación">
                     <div class="qr-card">
                         <div class="qr-card-header">
-                            <h3 id="qrLocationTitle" class="qr-location-title">UNAN Managua</h3>
-                            <p id="qrLocationSubtitle" class="qr-location-subtitle"></p>
+                            <div class="qr-header-badge">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                <span>Destino Activo</span>
+                            </div>
+                            <h2 id="qrLocationTitle" class="qr-location-title">UNAN Managua</h2>
+                            <p id="qrLocationSubtitle" class="qr-location-subtitle m-0">Recinto Universitario Rubén Darío</p>
                         </div>
+
                         <div class="qr-card-body">
-                            <div class="qr-canvas-box" id="qr"></div>
+                            <div class="qr-canvas-box" id="qr" role="img" aria-label="Código QR del destino"></div>
                         </div>
+
                         <div class="qr-card-actions">
-                            <button type="button" id="btnOpenMaps" class="btn btn-outline-primary qr-action-btn" aria-label="Abrir en Google Maps">
+                            <button type="button" id="btnOpenMaps" class="btn qr-action-btn btn-action-maps" aria-label="Abrir en aplicación Google Maps">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
                                 <span id="textBtnOpenMaps">Abrir en Maps</span>
                             </button>
-                            <button type="button" id="btnCopyLink" class="btn btn-outline-secondary qr-action-btn" aria-label="Copiar enlace de ubicación">
+
+                            <button type="button" id="btnCopyLink" class="btn qr-action-btn btn-action-copy" aria-label="Copiar enlace de ubicación">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                                 <span id="textBtnCopyLink">Copiar Enlace</span>
                             </button>
-                            <button type="button" id="btnDownloadQr" class="btn btn-outline-dark qr-action-btn" aria-label="Descargar código QR">
+
+                            <button type="button" id="btnDownloadQr" class="btn qr-action-btn btn-action-download" aria-label="Descargar código QR como imagen">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                                 <span id="textBtnDownloadQr">Descargar QR</span>
                             </button>
                         </div>
                     </div>
-                </div>
+                </section>
 
-            </div>
+            </main>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eGceHNDzF5b2D1y" crossorigin="anonymous"></script>
-    
+    <!-- Script de generación de QR y Módulo Principal ES -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
     <script src="main.js" type="module"></script>
 </body>

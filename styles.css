@@ -1,258 +1,413 @@
+/* ==========================================================================
+   SISTEMA DE DISEÑO - MAPA INTERACTIVO UNAN MANAGUA
+   Alineado con WCAG 2.1 AA, Ergonomía Móvil y Rendimiento Web
+   ========================================================================== */
+
 :root {
-  font-family: Arial, Helvetica, sans-serif;
-  --color-primario: #003366;
-  --color-secundario: #ffcc00;
-  --color-fondo: #f0f2f5;
-  --color-panel: #fff;
+  /* Tipografía */
+  --font-family-base: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Paleta Institucional UNAN Managua (Modo Claro) */
+  --color-primary: #002B5C;
+  --color-primary-light: #0d427d;
+  --color-primary-dark: #001A38;
+  --color-accent: #E6A100;
+  --color-accent-hover: #C98C00;
+  --color-accent-light: #FFF8E6;
+  --color-accent-text: #001B3A;
+
+  /* Superficies y Fondos */
+  --bg-app: #F3F5F9;
+  --bg-sidebar: #002B5C;
+  --bg-card: #FFFFFF;
+  --bg-input: #FFFFFF;
+  --bg-toolbar: #F8FAFC;
+
+  /* Texto y Bordes */
+  --text-main: #1E293B;
+  --text-muted: #64748B;
+  --text-inverse: #FFFFFF;
+  --border-color: #E2E8F0;
+  --border-focus: #E6A100;
+
+  /* Sombras y Elevación */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 12px 28px -4px rgba(0, 43, 92, 0.12), 0 4px 8px -2px rgba(0, 0, 0, 0.04);
+
+  /* Radios de Borde */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Transiciones */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-body {
+/* Modo Oscuro Profundo & Accesible */
+body.dark-mode {
+  --color-primary: #0A192F;
+  --color-primary-light: #172A45;
+  --color-primary-dark: #020C1B;
+  --color-accent: #FFC033;
+  --color-accent-hover: #E6A100;
+  --color-accent-light: rgba(255, 192, 51, 0.15);
+  --color-accent-text: #001B3A;
+
+  --bg-app: #0B111E;
+  --bg-sidebar: #111A2E;
+  --bg-card: #182238;
+  --bg-input: #1E2B45;
+  --bg-toolbar: #131C30;
+
+  --text-main: #F1F5F9;
+  --text-muted: #94A3B8;
+  --text-inverse: #FFFFFF;
+  --border-color: #273754;
+  --border-focus: #FFC033;
+
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Reset y Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
   margin: 0;
-  overflow-x: hidden;
-  background: var(--color-fondo);
-  color: #111;
-}
-
-.sidebar {
-  background: var(--color-primario);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.sidebar h1 {
-  font-size: 20px;
-  margin: 0 0 8px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.sidebar h1 img {
-  height: 36px;
-  border-radius: 4px;
-}
-
-.sidebar h2 {
-  font-size: 16px;
-  margin: 8px 0 16px;
-  font-weight: normal;
-}
-
-label {
-  font-size: 14px;
-  margin-bottom: 4px;
-  display: block;
-}
-
-select, button, input {
-  margin-bottom: 12px;
-  padding: 10px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-select, input {
-  background: #fff;
-  color: #111;
-}
-
-button {
-  background: var(--color-secundario);
-  color: var(--color-primario);
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-button:hover {
-  background: #e6b800;
-}
-
-.content {
-  display: flex;
-  flex-direction: column;
-  padding: 12px;
-  box-sizing: border-box;
-}
-
-.map-holder {
-  flex: 1;
-  border: 2px solid var(--color-primario);
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 12px;
-}
-
-iframe {
-  width: 100%;
+  padding: 0;
   height: 100%;
-  border: 0;
+  font-family: var(--font-family-base);
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
-.qr-panel {
-  width: 100%;
-  padding: 16px;
-  background: var(--color-panel);
-  border-top: 1px solid #e0e0e0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 8px;
-  box-sizing: border-box;
-}
-
-.qr-card {
-  width: 100%;
-  max-width: 600px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.qr-card-header {
-  width: 100%;
-  padding: 14px 16px;
-  background: linear-gradient(135deg, rgba(0, 51, 102, 0.95), rgba(0, 77, 153, 0.9)), url('./assets/QR-Background.jpg');
-  background-size: cover;
-  background-position: center;
-  color: #ffffff;
-  text-align: center;
-}
-
-.qr-location-title {
-  font-size: 16px;
+/* Accesibilidad: Enlace de Salto */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  padding: 10px 18px;
   font-weight: 700;
-  margin: 0;
-  color: #ffffff;
+  border-radius: var(--radius-sm);
+  z-index: 10000;
+  transition: top var(--transition-fast);
+  text-decoration: none;
 }
 
-.qr-location-subtitle {
-  font-size: 12px;
-  opacity: 0.85;
-  margin: 2px 0 0;
+.skip-link:focus {
+  top: 16px;
+  outline: 3px solid #000;
 }
 
-.qr-card-body {
-  padding: 16px;
+/* Indicadores de foco universales (WCAG 2.4.7) */
+:focus-visible {
+  outline: 3px solid var(--border-focus) !important;
+  outline-offset: 2px !important;
+}
+
+/* ==========================================================================
+   NAVEGACIÓN MÓVIL SEGMENTADA (< 992px)
+   ========================================================================== */
+.mobile-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
   display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.qr-canvas-box {
-  background: #ffffff !important;
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid #eaeaea;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 180px;
-  min-width: 180px;
-}
-
-.qr-canvas-box canvas {
-  background: #ffffff !important;
-  display: block;
-}
-
-.qr-card-actions {
-  width: 100%;
-  padding: 12px 16px;
-  background: #f8fafc;
-  border-top: 1px solid #f1f5f9;
-  display: flex;
-  flex-wrap: wrap;
+  background: var(--bg-sidebar);
+  padding: 8px 12px;
   gap: 8px;
-  justify-content: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
 }
 
-.qr-action-btn {
-  display: inline-flex;
+.mobile-tab-btn {
+  flex: 1;
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: 44px;
+}
+
+.mobile-tab-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.mobile-tab-btn.active {
+  color: var(--color-accent-text);
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* ==========================================================================
+   SIDEBAR (PANEL LATERAL DE CONTROL)
+   ========================================================================== */
+.sidebar {
+  background: var(--bg-sidebar);
+  color: #fff;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+  z-index: 100;
+  overflow-y: auto;
+  transition: background-color var(--transition-normal);
+}
+
+/* Encabezado del Sidebar */
+.sidebar-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 14px;
+}
+
+.brand-logo {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  border-radius: 6px;
+}
+
+.brand-title {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: #fff;
+}
+
+.brand-subtitle {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+/* Botón de alternancia de tema */
+.theme-toggle-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: var(--radius-full);
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  padding: 0;
+  margin: 0;
+}
+
+.theme-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.theme-toggle-btn .icon-sun { display: none; }
+.theme-toggle-btn .icon-moon { display: block; }
+
+body.dark-mode .theme-toggle-btn .icon-sun { display: block; color: var(--color-accent); }
+body.dark-mode .theme-toggle-btn .icon-moon { display: none; }
+
+.campus-motto {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* Formularios y Controles */
+.form-label {
   font-size: 13px;
   font-weight: 600;
-  padding: 8px 14px;
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
-  background: #ffffff;
-  color: #374151;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: auto;
-  margin-bottom: 0;
-  min-height: 40px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.qr-action-btn:hover {
-  background: #f3f4f6;
-  color: #111827;
-  border-color: #9ca3af;
-}
-
-.qr-action-btn.btn-outline-primary {
-  border-color: #003366;
-  color: #003366;
-}
-
-.qr-action-btn.btn-outline-primary:hover {
-  background: #003366;
-  color: #ffffff;
-}
-
-/* Toast Notifications */
-.toast-notification {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: #1f2937;
-  color: #ffffff;
-  padding: 10px 20px;
-  border-radius: 8px;
+.custom-select,
+.custom-input {
+  width: 100%;
+  min-height: 46px;
   font-size: 14px;
   font-weight: 500;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  z-index: 9999;
-  opacity: 0;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  pointer-events: none;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: var(--bg-input);
+  color: var(--text-main);
+  padding: 10px 14px;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-.toast-notification.show {
-  transform: translateX(-50%) translateY(0);
-  opacity: 1;
+.custom-select:focus,
+.custom-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-light);
 }
 
-/* Badge de estado Offline */
+/* Botón de Acción Principal (Generar QR) */
+.btn-action-primary {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  font-weight: 700;
+  font-size: 15px;
+  min-height: 48px;
+  border: none;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(230, 161, 0, 0.3);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-action-primary:hover {
+  background: var(--color-accent-hover);
+  color: var(--color-accent-text);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(230, 161, 0, 0.4);
+}
+
+.btn-action-primary:active {
+  transform: translateY(0);
+}
+
+/* Buscador y Botón de Limpiar */
+.search-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #94A3B8;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 6px;
+  width: auto;
+  border-radius: var(--radius-full);
+}
+
+.search-clear-btn:hover {
+  color: var(--color-primary);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode .search-clear-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Estado Vacío (Empty State) */
+.empty-state {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: 14px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.empty-state p {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.suggestion-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.suggestion-chip {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  border-radius: var(--radius-full);
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.suggestion-chip:hover {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  border-color: var(--color-accent);
+}
+
+/* ==========================================================================
+   CONTENT AREA: MAPA Y TARJETA QR
+   ========================================================================= */
+.content {
+  background: var(--bg-app);
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* Tarjeta del Mapa */
+.map-card {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  background: #e2e8f0;
+  min-height: 380px;
+}
+
+.map-iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Insignia Offline */
 .offline-badge {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  background: rgba(220, 38, 38, 0.9);
-  color: #ffffff;
-  padding: 4px 10px;
-  border-radius: 16px;
+  top: 14px;
+  right: 14px;
+  background: #DC2626;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.35);
   z-index: 10;
 }
 
@@ -260,7 +415,7 @@ iframe {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #ffffff;
+  background: #fff;
   animation: pulse 1.5s infinite;
 }
 
@@ -269,213 +424,266 @@ iframe {
   50% { opacity: 0.4; transform: scale(0.85); }
 }
 
-/* Modo oscuro */
-body.dark-mode {
-  background: #121212;
-  color: #eee;
+/* ==========================================================================
+   TARJETA QR (ALTO CONTRASTE ISO/IEC 18004)
+   ========================================================================== */
+.qr-card {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition-normal);
 }
 
-body.dark-mode .sidebar {
-  background: #1e1e1e;
-  color: #eee;
-}
-
-body.dark-mode .qr-panel {
-  background: #1a1a1a;
-  border-color: #333;
-}
-
-body.dark-mode .qr-card {
-  background: #242424;
-  border-color: #383838;
-}
-
-body.dark-mode .qr-card-actions {
-  background: #1e1e1e;
-  border-color: #333;
-}
-
-body.dark-mode .qr-action-btn {
-  background: #2a2a2a;
-  border-color: #444;
-  color: #eee;
-}
-
-body.dark-mode .qr-action-btn:hover {
-  background: #333;
-  color: #fff;
-  border-color: #666;
-}
-
-body.dark-mode .qr-action-btn.btn-outline-primary {
-  border-color: #ffcc00;
-  color: #ffcc00;
-}
-
-body.dark-mode .qr-action-btn.btn-outline-primary:hover {
-  background: #ffcc00;
-  color: #003366;
-}
-
-body.dark-mode select,
-body.dark-mode input {
-  background: #2c2c2c;
-  color: #eeee;
-}
-
-body.dark-mode button,
-body.dark-mode .btn {
-  background: #1a6b5c;
-  color: #eee;
-}
-
-/* Indicadores de foco accesibles WCAG 2.4.7 */
-button:focus-visible,
-select:focus-visible,
-input:focus-visible,
-.btn:focus-visible {
-  outline: 2px solid var(--color-secundario) !important;
-  outline-offset: 2px !important;
-}
-
-/* Contenedor y buscador */
-.search-wrapper {
+.qr-card-header {
   position: relative;
   width: 100%;
-}
-
-.search-clear-btn {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  color: #666;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 4px 8px;
-  width: auto;
-  margin-bottom: 0;
-}
-
-body.dark-mode .search-clear-btn {
-  color: #aaa;
-}
-
-/* Componente de Estado Vacío (Empty State) */
-.empty-state {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px dashed rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 12px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #002B5C 0%, #004D99 100%);
+  color: #fff;
   text-align: center;
+}
+
+.qr-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-accent);
+  margin-bottom: 6px;
+}
+
+.qr-location-title {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: #ffffff;
+}
+
+.qr-location-subtitle {
   font-size: 13px;
-  backdrop-filter: blur(4px);
+  color: rgba(255, 255, 255, 0.85);
 }
 
-body.dark-mode .empty-state {
-  background: rgba(0, 0, 0, 0.25);
-  border-color: rgba(255, 255, 255, 0.15);
+.qr-card-body {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-card);
 }
 
-.empty-state p {
-  margin: 0 0 10px 0;
-  color: #f8f9fa;
+/* Contenedor del Canvas QR con fondo blanco puro y sombra suave */
+.qr-canvas-box {
+  background: #FFFFFF !important;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  min-width: 200px;
 }
 
-.suggestion-chips {
+.qr-canvas-box canvas {
+  background: #FFFFFF !important;
+  display: block;
+}
+
+/* Barra de Acciones Rápidas */
+.qr-card-actions {
+  width: 100%;
+  padding: 14px 20px;
+  background: var(--bg-toolbar);
+  border-top: 1px solid var(--border-color);
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 10px;
   justify-content: center;
-  margin-top: 8px;
 }
 
-.suggestion-chip {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: #fff;
-  border-radius: 16px;
-  padding: 4px 10px;
-  font-size: 11px;
+.qr-action-btn {
+  flex: 1 1 140px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 16px;
+  min-height: 46px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-main);
   cursor: pointer;
-  width: auto;
-  margin-bottom: 0;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
 }
 
-.suggestion-chip:hover {
-  background: var(--color-secundario);
-  color: var(--color-primario);
-  border-color: var(--color-secundario);
+.qr-action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
-body.dark-mode .suggestion-chip {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: #ddd;
+.btn-action-maps {
+  background: var(--color-primary);
+  color: #FFFFFF;
+  border-color: var(--color-primary);
 }
 
-body.dark-mode .suggestion-chip:hover {
-  background: #1a6b5c;
-  color: #fff;
-  border-color: #1a6b5c;
+.btn-action-maps:hover {
+  background: var(--color-primary-light);
+  color: #FFFFFF;
 }
 
-body.dark-mode .map-holder {
-  border-color: #555;
+.btn-action-copy {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border-color: var(--border-color);
 }
 
-body.dark-mode .qr-panel {
-  background: #1a1a1a;
-  border-color: #333;
+.btn-action-copy:hover {
+  background: var(--border-color);
 }
 
-body.dark-mode .qr-holder {
-  background: #2a2a2a;
-  border-color: #444;
+.btn-action-download {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border-color: var(--border-color);
 }
 
-body.dark-mode .qr-holder::before {
-    filter: grayscale(100%);
+.btn-action-download:hover {
+  background: var(--border-color);
 }
 
-/* Media Query para Pantallas Pequeñas (Móviles) */
+/* Modo oscuro para botones */
+body.dark-mode .btn-action-maps {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  border-color: var(--color-accent);
+}
+
+body.dark-mode .btn-action-maps:hover {
+  background: var(--color-accent-hover);
+}
+
+/* ==========================================================================
+   TOAST NOTIFICATION (ACCESIBLE)
+   ========================================================================== */
+.toast-notification {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(30px);
+  background: #0F172A;
+  color: #FFFFFF;
+  padding: 12px 24px;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-notification.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* ==========================================================================
+   RESPONSIVIDAD & ADAPTACIÓN MÓVIL (< 992px)
+   ========================================================================== */
 @media (max-width: 991.98px) {
+  .app-layout, .row {
+    height: auto !important;
+    min-height: auto !important;
+  }
 
-    body{
-      overflow-y: auto !important;
-      overflow-x: auto !important;
-      height: auto !important;
-    }
+  .sidebar, .content {
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    padding: 12px !important;
+  }
 
-    .container-fluid,
-    .row{
-      height: auto !important;
-      min-height: auto !important;
-    }
-    
-    /* El contenedor del mapa (col-12 col-lg-8 content) */
-    .content {
-        /* Eliminamos la altura fija/flexible del modo escritorio para que fluya en móvil */
-        height: auto; 
-        min-height: auto;
-    }
+  /* Control de vistas alternadas mediante tabs móviles */
+  body.mobile-view-map #sidebarPanel {
+    display: none !important;
+  }
 
-    /* El mapa y el QR Panel deben ajustarse automáticamente en altura */
-    .map-holder,
-    .qr-panel {
-        /* Deshabilitamos las reglas de alto fijo que funcionaban en escritorio */
-        height: auto !important; 
-        min-height: auto !important;
-        flex-shrink: 0 !important; /* Aseguramos que no se comprima */
-        width: 100%;
-    }
-    
-    /* Damos una altura mínima al QR Panel para que no se comprima demasiado */
-    .qr-panel {
-        min-height: 200px; /* Puedes ajustar este valor si lo necesitas más grande o pequeño */
-    }
+  body.mobile-view-controls #contentMain {
+    display: none !important;
+  }
+
+  /* Mapa protagonista: mucho más grande y amplio para navegación en smartphone */
+  .map-card {
+    height: 68vh;
+    min-height: 450px;
+    margin-bottom: 16px !important;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* Tarjeta QR optimizada y compacta para acompañar al mapa sin sobrecargarlo */
+  .qr-card {
+    border-radius: var(--radius-md);
+  }
+
+  .qr-card-header {
+    padding: 12px 14px;
+  }
+
+  .qr-location-title {
+    font-size: 16px;
+  }
+
+  .qr-card-body {
+    padding: 12px;
+  }
+
+  .qr-canvas-box {
+    min-height: 150px;
+    min-width: 150px;
+    padding: 8px;
+  }
+
+  .qr-card-actions {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .qr-action-btn {
+    flex: 1 1 calc(50% - 6px);
+    font-size: 12px;
+    min-height: 44px;
+    padding: 8px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .map-card {
+    height: 65vh;
+    min-height: 400px;
+  }
+
+  .qr-action-btn {
+    flex: 1 1 100%;
+  }
 }

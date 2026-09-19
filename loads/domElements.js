@@ -3,6 +3,7 @@ export const aulaSelect = document.getElementById('aula');
 export const qrHolder = document.getElementById('qr');
 export const mapFrame = document.getElementById('map');
 export const genBtn = document.getElementById('gen');
+export const genBtnText = document.getElementById('genBtnText');
 export const idiomaSelect = document.getElementById('idioma');
 export const lemaH2 = document.getElementById('lema');
 export const labelDestino = document.getElementById('labelDestino');
@@ -28,3 +29,9 @@ export const qrLocationTitle = document.getElementById('qrLocationTitle');
 export const qrLocationSubtitle = document.getElementById('qrLocationSubtitle');
 export const offlineNotice = document.getElementById('offlineNotice');
 export const offlineNoticeText = document.getElementById('offlineNoticeText');
+
+// Elementos de pestañas móviles
+export const tabBtnControls = document.getElementById('tabBtnControls');
+export const tabBtnMap = document.getElementById('tabBtnMap');
+export const tabLabelSearch = document.getElementById('tabLabelSearch');
+export const tabLabelMap = document.getElementById('tabLabelMap');

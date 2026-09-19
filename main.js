@@ -161,7 +161,7 @@ function announceLiveFeedback(message) {
 function clearQrAndMap() {
     if (DOM.qrHolder) DOM.qrHolder.innerHTML = '';
     if (DOM.qrLocationTitle) DOM.qrLocationTitle.textContent = 'UNAN Managua';
-    if (DOM.qrLocationSubtitle) DOM.qrLocationSubtitle.textContent = '';
+    if (DOM.qrLocationSubtitle) DOM.qrLocationSubtitle.textContent = 'Recinto Universitario Rubén Darío';
     currentMapsDirectUrl = '';
 }
 
@@ -174,9 +174,15 @@ function updateTextos() {
     DOM.lemaH2.textContent = i18nService.t('lema');
     DOM.labelDestino.textContent = i18nService.t('seleccionarDestino');
     DOM.labelAula.textContent = i18nService.t('seleccionarAula');
-    DOM.genBtn.textContent = i18nService.t('generarQR');
-    DOM.labelIdioma.textContent = i18nService.t('idiomaLabel');
-    DOM.labelBusqueda.textContent = i18nService.t('labelBusqueda');
+    
+    if (DOM.genBtnText) {
+        DOM.genBtnText.textContent = i18nService.t('generarQR');
+    } else if (DOM.genBtn) {
+        DOM.genBtn.textContent = i18nService.t('generarQR');
+    }
+
+    DOM.labelIdioma.querySelector('span') ? DOM.labelIdioma.querySelector('span').textContent = i18nService.t('idiomaLabel') : DOM.labelIdioma.textContent = i18nService.t('idiomaLabel');
+    DOM.labelBusqueda.querySelector('span') ? DOM.labelBusqueda.querySelector('span').textContent = i18nService.t('labelBusqueda') : DOM.labelBusqueda.textContent = i18nService.t('labelBusqueda');
     DOM.busquedaInput.placeholder = i18nService.t('placeholderBusqueda');
     
     // Botones de acción QR
@@ -184,10 +190,11 @@ function updateTextos() {
     if (DOM.textBtnCopyLink) DOM.textBtnCopyLink.textContent = i18nService.t('copiarEnlace');
     if (DOM.textBtnDownloadQr) DOM.textBtnDownloadQr.textContent = i18nService.t('descargarQR');
 
-    // Modo oscuro
+    // Modo oscuro título del botón
     if (DOM.btnDarkMode) { 
         const isDark = document.body.classList.contains('dark-mode');
-        DOM.btnDarkMode.textContent = isDark ? i18nService.t('modoClaro') : i18nService.t('modoOscuro');
+        DOM.btnDarkMode.setAttribute('title', isDark ? i18nService.t('modoClaro') : i18nService.t('modoOscuro'));
+        DOM.btnDarkMode.setAttribute('aria-label', isDark ? i18nService.t('modoClaro') : i18nService.t('modoOscuro'));
     }
 
     if (DOM.idiomaSelect && DOM.idiomaSelect.value !== idioma) {
@@ -233,8 +240,9 @@ async function generateQR() {
         DOM.qrHolder.innerHTML = '';
         try {
             const canvas = document.createElement('canvas');
+            const qrWidth = (typeof window !== 'undefined' && window.innerWidth < 576) ? 140 : 180;
             await qrService.renderToCanvas(canvas, currentMapsDirectUrl, {
-                width: 180,
+                width: qrWidth,
                 margin: 2
             });
             DOM.qrHolder.appendChild(canvas);
@@ -257,7 +265,6 @@ async function handleCopyLink() {
         if (navigator.clipboard && navigator.clipboard.writeText) {
             await navigator.clipboard.writeText(currentMapsDirectUrl);
         } else {
-            // Fallback para navegadores antiguos
             const textarea = document.createElement('textarea');
             textarea.value = currentMapsDirectUrl;
             textarea.style.position = 'fixed';
@@ -348,12 +355,41 @@ function toggleDarkMode() {
 }
 
 function loadDarkModePreference() {
-    const theme = storageService.getItem(CAMPUS_CONFIG.storageKeys.theme) ||
-                  (storageService.getItem(CAMPUS_CONFIG.legacyStorageKeys.theme) === 'enabled' ? 'dark' : 'light');
-    if (theme === 'dark') {
+    const savedTheme = storageService.getItem(CAMPUS_CONFIG.storageKeys.theme) ||
+                       (storageService.getItem(CAMPUS_CONFIG.legacyStorageKeys.theme) === 'enabled' ? 'dark' : null);
+    
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+    } else if (savedTheme === 'light') {
+        document.body.classList.remove('dark-mode');
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // Detectar preferencia nativa del sistema
         document.body.classList.add('dark-mode');
     }
     updateTextos();
+}
+
+/**
+ * Control de Pestañas Móviles (< 992px)
+ */
+function setMobileTab(view) {
+    if (!DOM.tabBtnControls || !DOM.tabBtnMap) return;
+
+    if (view === 'map') {
+        document.body.classList.add('mobile-view-map');
+        document.body.classList.remove('mobile-view-controls');
+        DOM.tabBtnMap.classList.add('active');
+        DOM.tabBtnMap.setAttribute('aria-selected', 'true');
+        DOM.tabBtnControls.classList.remove('active');
+        DOM.tabBtnControls.setAttribute('aria-selected', 'false');
+    } else {
+        document.body.classList.add('mobile-view-controls');
+        document.body.classList.remove('mobile-view-map');
+        DOM.tabBtnControls.classList.add('active');
+        DOM.tabBtnControls.setAttribute('aria-selected', 'true');
+        DOM.tabBtnMap.classList.remove('active');
+        DOM.tabBtnMap.setAttribute('aria-selected', 'false');
+    }
 }
 
 // Event Listeners de Selección y Búsqueda
@@ -381,7 +417,13 @@ if (DOM.btnClearSearch) {
     });
 }
 
-DOM.genBtn.addEventListener('click', generateQR);
+DOM.genBtn.addEventListener('click', () => {
+    generateQR();
+    // En móviles, navegar automáticamente a la pestaña del mapa al presionar el botón
+    if (window.innerWidth < 992) {
+        setMobileTab('map');
+    }
+});
 
 DOM.idiomaSelect.addEventListener('change', (e) => {
     i18nService.setLanguage(e.target.value);
@@ -399,6 +441,10 @@ if (DOM.btnOpenMaps) DOM.btnOpenMaps.addEventListener('click', handleOpenMaps);
 if (DOM.btnCopyLink) DOM.btnCopyLink.addEventListener('click', handleCopyLink);
 if (DOM.btnDownloadQr) DOM.btnDownloadQr.addEventListener('click', handleDownloadQr);
 
+// Botones de Pestañas Móviles
+if (DOM.tabBtnControls) DOM.tabBtnControls.addEventListener('click', () => setMobileTab('controls'));
+if (DOM.tabBtnMap) DOM.tabBtnMap.addEventListener('click', () => setMobileTab('map'));
+
 // Monitoreo de Conectividad (Online / Offline)
 window.addEventListener('online', updateOfflineState);
 window.addEventListener('offline', updateOfflineState);
@@ -413,3 +459,4 @@ loadLastSelection();
 updateTextos(); 
 loadDarkModePreference();
 generateQR();
+setMobileTab('controls');
