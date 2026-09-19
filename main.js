@@ -1,12 +1,16 @@
 import { i18nService } from './js/services/i18nService.js';
 import { searchService } from './js/services/searchService.js';
 import { mapService } from './js/services/mapService.js';
+import { qrService } from './js/services/qrService.js';
 import { storageService } from './js/services/storageService.js';
+import { toast } from './js/ui/toast.js';
 import { CAMPUS_DATA } from './js/data/campusData.js';
 import { CAMPUS_CONFIG } from './js/config/constants.js';
 import * as DOM from './loads/domElements.js';
 
 let searchDebounceTimer = null;
+let currentMapsDirectUrl = '';
+let currentTargetName = 'UNAN Managua';
 
 /**
  * Renderiza los destinos según el término de búsqueda y selecciona la mejor coincidencia
@@ -31,6 +35,7 @@ function renderDestinos(filter = '', preserveSelection = false) {
 
         showEmptyState(query);
         announceLiveFeedback(i18nService.t('sinResultados'));
+        clearQrAndMap();
         return;
     }
 
@@ -151,6 +156,16 @@ function announceLiveFeedback(message) {
 }
 
 /**
+ * Limpia la tarjeta QR y el mapa cuando no hay destino válido
+ */
+function clearQrAndMap() {
+    if (DOM.qrHolder) DOM.qrHolder.innerHTML = '';
+    if (DOM.qrLocationTitle) DOM.qrLocationTitle.textContent = 'UNAN Managua';
+    if (DOM.qrLocationSubtitle) DOM.qrLocationSubtitle.textContent = '';
+    currentMapsDirectUrl = '';
+}
+
+/**
  * Actualiza todos los textos de la interfaz según el idioma actual
  */
 function updateTextos() {
@@ -164,6 +179,12 @@ function updateTextos() {
     DOM.labelBusqueda.textContent = i18nService.t('labelBusqueda');
     DOM.busquedaInput.placeholder = i18nService.t('placeholderBusqueda');
     
+    // Botones de acción QR
+    if (DOM.textBtnOpenMaps) DOM.textBtnOpenMaps.textContent = i18nService.t('abrirEnMaps');
+    if (DOM.textBtnCopyLink) DOM.textBtnCopyLink.textContent = i18nService.t('copiarEnlace');
+    if (DOM.textBtnDownloadQr) DOM.textBtnDownloadQr.textContent = i18nService.t('descargarQR');
+
+    // Modo oscuro
     if (DOM.btnDarkMode) { 
         const isDark = document.body.classList.contains('dark-mode');
         DOM.btnDarkMode.textContent = isDark ? i18nService.t('modoClaro') : i18nService.t('modoOscuro');
@@ -172,53 +193,118 @@ function updateTextos() {
     if (DOM.idiomaSelect && DOM.idiomaSelect.value !== idioma) {
         DOM.idiomaSelect.value = idioma;
     }
+
+    updateOfflineState();
 }
 
 /**
- * Genera el código QR y actualiza el mapa interactivo de Google Maps
+ * Genera el código QR de alto contraste y actualiza el mapa interactivo de Google Maps
  */
 async function generateQR() {
-    if (DOM.destinoSelect.disabled) {
-        DOM.qrHolder.innerHTML = '';
+    if (DOM.destinoSelect.disabled || !DOM.destinoSelect.value) {
+        clearQrAndMap();
         return;
     }
 
+    const isAulaSelected = !!DOM.aulaSelect.value;
     const coords = DOM.aulaSelect.value || DOM.destinoSelect.value;
-    const selectedOption = (DOM.aulaSelect.value ? DOM.aulaSelect.selectedOptions[0] : DOM.destinoSelect.selectedOptions[0]);
-    const nombre = selectedOption ? selectedOption.textContent : 'UNAN Managua';
+    const destName = DOM.destinoSelect.selectedOptions[0]?.textContent || 'UNAN Managua';
+    const aulaName = isAulaSelected ? DOM.aulaSelect.selectedOptions[0]?.textContent : '';
+    const fullName = isAulaSelected ? `${destName} - ${aulaName}` : destName;
     const idioma = i18nService.getLanguage();
 
+    currentTargetName = fullName;
+
     if (!mapService.isValidCoords(coords)) {
-        DOM.qrHolder.innerHTML = '';
+        clearQrAndMap();
         return;
     }
 
-    const mapsUrl = mapService.getDirectUrl(coords, nombre, idioma);
-    DOM.mapFrame.src = mapService.getEmbedUrl(coords, nombre, idioma);
+    // Actualizar encabezado de la tarjeta QR
+    if (DOM.qrLocationTitle) DOM.qrLocationTitle.textContent = isAulaSelected ? aulaName : destName;
+    if (DOM.qrLocationSubtitle) DOM.qrLocationSubtitle.textContent = isAulaSelected ? `${destName} • UNAN Managua` : 'Recinto Universitario Rubén Darío';
 
-    DOM.qrHolder.innerHTML = '';
-    try {
-        if (typeof QRCode !== 'undefined') {
+    // Generar URL para Maps e iframe
+    currentMapsDirectUrl = mapService.getDirectUrl(coords, fullName, idioma);
+    DOM.mapFrame.src = mapService.getEmbedUrl(coords, fullName, idioma);
+
+    // Generar Código QR de Alto Contraste con QrService
+    if (DOM.qrHolder) {
+        DOM.qrHolder.innerHTML = '';
+        try {
             const canvas = document.createElement('canvas');
-            await QRCode.toCanvas(canvas, mapsUrl, { errorCorrectionLevel: 'H', margin: 2, width: 160 });
+            await qrService.renderToCanvas(canvas, currentMapsDirectUrl, {
+                width: 180,
+                margin: 2
+            });
             DOM.qrHolder.appendChild(canvas);
-
-            const label = document.createElement('div');
-            label.textContent = nombre;
-            label.style.fontSize = '13px';
-            label.style.fontWeight = 'bold';
-            label.style.marginTop = '8px';
-            label.style.textAlign = 'center';
-            DOM.qrHolder.appendChild(label);
-        } else {
-            DOM.qrHolder.innerHTML = `<p style="color: #666; font-size: 13px;">${i18nService.t('errorQR')}</p>`;
+        } catch (e) {
+            console.error('[QRCode] Error al generar código QR:', e);
+            DOM.qrHolder.innerHTML = `<p style="color: #666; font-size: 13px; text-align: center; padding: 12px;">${i18nService.t('errorQR')}</p>`;
         }
-    } catch (e) {
-        console.error('[QRCode] Error al generar código:', e);
-        DOM.qrHolder.textContent = i18nService.t('errorQR');
     }
 
     saveCurrentSelection();
+}
+
+/**
+ * Copia el enlace de Google Maps al portapapeles con feedback accesible
+ */
+async function handleCopyLink() {
+    if (!currentMapsDirectUrl) return;
+
+    try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(currentMapsDirectUrl);
+        } else {
+            // Fallback para navegadores antiguos
+            const textarea = document.createElement('textarea');
+            textarea.value = currentMapsDirectUrl;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+        toast.show(i18nService.t('enlaceCopiado'));
+    } catch (e) {
+        console.error('[Clipboard] Error al copiar enlace:', e);
+        toast.show('Error al copiar enlace');
+    }
+}
+
+/**
+ * Abre el destino directamente en la app / web de Google Maps
+ */
+function handleOpenMaps() {
+    if (!currentMapsDirectUrl) return;
+    window.open(currentMapsDirectUrl, '_blank', 'noopener,noreferrer');
+}
+
+/**
+ * Descarga el código QR como imagen PNG de alta resolución
+ */
+async function handleDownloadQr() {
+    if (!currentMapsDirectUrl) return;
+    const cleanFileName = `UNAN_QR_${currentTargetName.replace(/\s+/g, '_')}.png`;
+    const success = await qrService.downloadQr(currentMapsDirectUrl, cleanFileName);
+    if (success) {
+        toast.show('Código QR descargado con éxito');
+    }
+}
+
+/**
+ * Gestiona el estado y alerta visual de conexión offline
+ */
+function updateOfflineState() {
+    const isOffline = typeof navigator !== 'undefined' && !navigator.onLine;
+    if (DOM.offlineNotice) {
+        DOM.offlineNotice.classList.toggle('d-none', !isOffline);
+        if (DOM.offlineNoticeText) {
+            DOM.offlineNoticeText.textContent = i18nService.t('modoOffline');
+        }
+    }
 }
 
 /**
@@ -270,7 +356,7 @@ function loadDarkModePreference() {
     updateTextos();
 }
 
-// Event Listeners
+// Event Listeners de Selección y Búsqueda
 DOM.destinoSelect.addEventListener('change', () => {
     updateAulas();
     generateQR();
@@ -307,6 +393,15 @@ DOM.idiomaSelect.addEventListener('change', (e) => {
 if (DOM.btnDarkMode) {
     DOM.btnDarkMode.addEventListener('click', toggleDarkMode);
 }
+
+// Botones de Acción de la Tarjeta QR
+if (DOM.btnOpenMaps) DOM.btnOpenMaps.addEventListener('click', handleOpenMaps);
+if (DOM.btnCopyLink) DOM.btnCopyLink.addEventListener('click', handleCopyLink);
+if (DOM.btnDownloadQr) DOM.btnDownloadQr.addEventListener('click', handleDownloadQr);
+
+// Monitoreo de Conectividad (Online / Offline)
+window.addEventListener('online', updateOfflineState);
+window.addEventListener('offline', updateOfflineState);
 
 // Inicialización de la aplicación
 const initialLang = i18nService.getLanguage();
