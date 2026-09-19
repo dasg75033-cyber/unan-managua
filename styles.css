@@ -73,11 +73,14 @@ body.dark-mode {
 }
 
 /* Reset y Base */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -160,6 +163,19 @@ html, body {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
+.mobile-theme-btn {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.mobile-theme-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
 /* ==========================================================================
    SIDEBAR (PANEL LATERAL DE CONTROL)
    ========================================================================== */
@@ -222,11 +238,22 @@ html, body {
   transform: scale(1.05);
 }
 
-.theme-toggle-btn .icon-sun { display: none; }
-.theme-toggle-btn .icon-moon { display: block; }
+.theme-toggle-btn .icon-sun {
+  display: none;
+}
 
-body.dark-mode .theme-toggle-btn .icon-sun { display: block; color: var(--color-accent); }
-body.dark-mode .theme-toggle-btn .icon-moon { display: none; }
+.theme-toggle-btn .icon-moon {
+  display: block;
+}
+
+body.dark-mode .theme-toggle-btn .icon-sun {
+  display: block;
+  color: var(--color-accent);
+}
+
+body.dark-mode .theme-toggle-btn .icon-moon {
+  display: none;
+}
 
 .campus-motto {
   font-size: 12px;
@@ -420,30 +447,56 @@ body.dark-mode .search-clear-btn:hover {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.85); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
 }
 
 /* ==========================================================================
-   TARJETA QR (ALTO CONTRASTE ISO/IEC 18004)
+   TARJETA QR CON FONDO INSTITUCIONAL (QR-Background.jpg)
    ========================================================================== */
 .qr-card {
+  position: relative;
   width: 100%;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   transition: all var(--transition-normal);
+  isolation: isolate;
+  background-clip: padding-box;
+  transform: translateZ(0);
+  -webkit-mask-image: -webkit-radial-gradient(white, black); /* Recorte perfecto en WebKit/Blink */
+}
+
+.qr-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(135deg, rgba(0, 43, 92, 0.88) 0%, rgba(0, 77, 153, 0.82) 100%), url('./assets/QR-Background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: inherit;
+  z-index: -1;
+  pointer-events: none;
 }
 
 .qr-card-header {
   position: relative;
   width: 100%;
-  padding: 16px 20px;
-  background: linear-gradient(135deg, #002B5C 0%, #004D99 100%);
+  padding: 18px 20px 8px;
+  background: transparent;
   color: #fff;
   text-align: center;
 }
@@ -452,8 +505,9 @@ body.dark-mode .search-clear-btn:hover {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(255, 255, 255, 0.15);
-  padding: 3px 10px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(6px);
+  padding: 4px 12px;
   border-radius: var(--radius-full);
   font-size: 11px;
   font-weight: 700;
@@ -461,41 +515,49 @@ body.dark-mode .search-clear-btn:hover {
   letter-spacing: 0.05em;
   color: var(--color-accent);
   margin-bottom: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .qr-location-title {
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 800;
   letter-spacing: -0.01em;
   margin: 0;
   color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .qr-location-subtitle {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .qr-card-body {
-  padding: 20px;
+  padding: 16px 20px;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: var(--bg-card);
+  background: transparent;
 }
 
-/* Contenedor del Canvas QR con fondo blanco puro y sombra suave */
+/* Contenedor del Canvas QR con fondo blanco puro y marco nítido */
 .qr-canvas-box {
   background: #FFFFFF !important;
   padding: 12px;
   border-radius: var(--radius-md);
-  border: 1px solid #E2E8F0;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  border: 3px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 200px;
   min-width: 200px;
+  transition: transform var(--transition-fast);
+}
+
+.qr-canvas-box:hover {
+  transform: scale(1.02);
 }
 
 .qr-canvas-box canvas {
@@ -503,12 +565,13 @@ body.dark-mode .search-clear-btn:hover {
   display: block;
 }
 
-/* Barra de Acciones Rápidas */
+/* Barra de Acciones Rápidas con Efecto Glassmorphic */
 .qr-card-actions {
   width: 100%;
   padding: 14px 20px;
-  background: var(--bg-toolbar);
-  border-top: 1px solid var(--border-color);
+  background: rgba(0, 27, 58, 0.72);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -569,7 +632,20 @@ body.dark-mode .search-clear-btn:hover {
   background: var(--border-color);
 }
 
-/* Modo oscuro para botones */
+/* Modo oscuro para tarjeta QR y botones */
+body.dark-mode .qr-card {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+body.dark-mode .qr-card::before {
+  background-image: linear-gradient(135deg, rgba(10, 25, 47, 0.92) 0%, rgba(17, 26, 46, 0.88) 100%), url('./assets/QR-Background.jpg');
+}
+
+body.dark-mode .qr-card-actions {
+  background: rgba(10, 25, 47, 0.85);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
 body.dark-mode .btn-action-maps {
   background: var(--color-accent);
   color: var(--color-accent-text);
@@ -611,16 +687,24 @@ body.dark-mode .btn-action-maps:hover {
    RESPONSIVIDAD & ADAPTACIÓN MÓVIL (< 992px)
    ========================================================================== */
 @media (max-width: 991.98px) {
-  .app-layout, .row {
+
+  .app-layout,
+  .row {
     height: auto !important;
     min-height: auto !important;
   }
 
-  .sidebar, .content {
+  .sidebar,
+  .content {
     height: auto !important;
     min-height: auto !important;
     overflow: visible !important;
     padding: 12px !important;
+  }
+
+  /* Ocultar el botón duplicado de tema del sidebar en celular para dejar únicamente el de la barra superior */
+  .sidebar-header .theme-toggle-btn {
+    display: none !important;
   }
 
   /* Control de vistas alternadas mediante tabs móviles */
@@ -632,7 +716,6 @@ body.dark-mode .btn-action-maps:hover {
     display: none !important;
   }
 
-  /* Mapa protagonista: mucho más grande y amplio para navegación en smartphone */
   .map-card {
     height: 68vh;
     min-height: 450px;

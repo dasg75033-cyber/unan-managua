@@ -12,6 +12,7 @@ export const labelIdioma = document.getElementById('labelIdioma');
 export const busquedaInput = document.getElementById('busqueda');
 export const labelBusqueda = document.getElementById('labelBusqueda');
 export const btnDarkMode = document.getElementById('btnDarkMode');
+export const btnDarkModeMobile = document.getElementById('btnDarkModeMobile');
 export const btnClearSearch = document.getElementById('btnClearSearch');
 export const searchLiveFeedback = document.getElementById('searchLiveFeedback');
 export const emptyState = document.getElementById('emptyState');

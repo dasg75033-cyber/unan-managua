@@ -190,11 +190,17 @@ function updateTextos() {
     if (DOM.textBtnCopyLink) DOM.textBtnCopyLink.textContent = i18nService.t('copiarEnlace');
     if (DOM.textBtnDownloadQr) DOM.textBtnDownloadQr.textContent = i18nService.t('descargarQR');
 
-    // Modo oscuro título del botón
+    // Modo oscuro: títulos de botones de escritorio y móvil
+    const isDark = document.body.classList.contains('dark-mode');
+    const themeTitle = isDark ? i18nService.t('modoClaro') : i18nService.t('modoOscuro');
+    
     if (DOM.btnDarkMode) { 
-        const isDark = document.body.classList.contains('dark-mode');
-        DOM.btnDarkMode.setAttribute('title', isDark ? i18nService.t('modoClaro') : i18nService.t('modoOscuro'));
-        DOM.btnDarkMode.setAttribute('aria-label', isDark ? i18nService.t('modoClaro') : i18nService.t('modoOscuro'));
+        DOM.btnDarkMode.setAttribute('title', themeTitle);
+        DOM.btnDarkMode.setAttribute('aria-label', themeTitle);
+    }
+    if (DOM.btnDarkModeMobile) { 
+        DOM.btnDarkModeMobile.setAttribute('title', themeTitle);
+        DOM.btnDarkModeMobile.setAttribute('aria-label', themeTitle);
     }
 
     if (DOM.idiomaSelect && DOM.idiomaSelect.value !== idioma) {
@@ -434,6 +440,10 @@ DOM.idiomaSelect.addEventListener('change', (e) => {
 
 if (DOM.btnDarkMode) {
     DOM.btnDarkMode.addEventListener('click', toggleDarkMode);
+}
+
+if (DOM.btnDarkModeMobile) {
+    DOM.btnDarkModeMobile.addEventListener('click', toggleDarkMode);
 }
 
 // Botones de Acción de la Tarjeta QR
