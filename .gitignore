@@ -1,0 +1,8 @@
+# Pruebas internas locales
+tests/
+*.test.js
+
+# Archivos de sistema y logs
+.DS_Store
+Thumbs.db
+*.log

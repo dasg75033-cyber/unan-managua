@@ -172,9 +172,101 @@ body.dark-mode button,
 body.dark-mode .btn {
   background: #1a6b5c;
   color: #eee;
+}
 
-  outline: none !important;
-  box-shadow: none !important;
+/* Indicadores de foco accesibles WCAG 2.4.7 */
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--color-secundario) !important;
+  outline-offset: 2px !important;
+}
+
+/* Contenedor y buscador */
+.search-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #666;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  width: auto;
+  margin-bottom: 0;
+}
+
+body.dark-mode .search-clear-btn {
+  color: #aaa;
+}
+
+/* Componente de Estado Vacío (Empty State) */
+.empty-state {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  text-align: center;
+  font-size: 13px;
+  backdrop-filter: blur(4px);
+}
+
+body.dark-mode .empty-state {
+  background: rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.empty-state p {
+  margin: 0 0 10px 0;
+  color: #f8f9fa;
+}
+
+.suggestion-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.suggestion-chip {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
+  border-radius: 16px;
+  padding: 4px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  width: auto;
+  margin-bottom: 0;
+  transition: all 0.2s ease;
+}
+
+.suggestion-chip:hover {
+  background: var(--color-secundario);
+  color: var(--color-primario);
+  border-color: var(--color-secundario);
+}
+
+body.dark-mode .suggestion-chip {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ddd;
+}
+
+body.dark-mode .suggestion-chip:hover {
+  background: #1a6b5c;
+  color: #fff;
+  border-color: #1a6b5c;
 }
 
 body.dark-mode .map-holder {
