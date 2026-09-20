@@ -418,6 +418,13 @@ body.dark-mode .search-clear-btn:hover {
   width: 100%;
   height: 100%;
   display: block;
+  transition: filter var(--transition-normal);
+}
+
+/* Modo Oscuro para el Mapa Embebido */
+body.dark-mode #map,
+body.dark-mode .map-iframe {
+  filter: invert(100%) hue-rotate(180deg);
 }
 
 /* Insignia Offline */
